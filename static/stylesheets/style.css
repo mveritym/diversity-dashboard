@@ -6,3 +6,10 @@
   font: 10px sans-serif;
   text-anchor: end;
 }
+
+.axis path,
+.axis line {
+  fill: black;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
