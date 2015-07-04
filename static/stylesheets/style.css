@@ -1,0 +1,8 @@
+.women { fill: thistle; }
+.men { fill: steelblue; }
+
+.chart text {
+  fill: black;
+  font: 10px sans-serif;
+  text-anchor: end;
+}
