@@ -3,7 +3,8 @@ function get_data_file () {
       url: "/loadData",
     })
     .done(function(fileName) {
-        var fileName = fileName.match("\"(.+)\"")[1];
+        var matchedName = fileName.match("\"(.+)\""); // if file name was printed by R script, need to extract file name
+        fileName = matchedName ? matchedName[1] : fileName;
         load_data(fileName);
         return fileName;
     });
