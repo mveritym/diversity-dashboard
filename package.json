@@ -15,6 +15,7 @@
     "serve-favicon": "~2.2.0"
   },
   "devDependencies": {
+    "connect-busboy": "0.0.2",
     "q": "^1.4.1"
   }
 }
