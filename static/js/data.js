@@ -26,7 +26,7 @@ d3.csv('data/genders_by_role.csv', function(error, data) {
     var bar = chart.selectAll("g")
         .data(data)
         .enter().append("g")
-        .attr("transform", function(d, index) { console.log((index*barWidth) + axisWidth); return "translate(" + ((index * barWidth) + axisWidth) + ",0)"; });
+        .attr("transform", function(d, index) { return "translate(" + ((index * barWidth) + axisWidth) + ",0)"; });
 
     bar.append("text")
         .text(function(d) { return d["Role"]; })
@@ -38,13 +38,26 @@ d3.csv('data/genders_by_role.csv', function(error, data) {
         .attr("y", function(d) { return maxHeight - scale(get_total(d)) })
         .attr("width", barWidth - 1)
         .attr("height", function(d) { return scale(get_total(d)); })
-        .attr("class", "women");
+        .attr("class", "women")
+        .on('mouseover', function(d) {
+            d3.select(this)
+                .attr("class", "women-selected");
+        })
+        .on('mouseout', function(d) {
+            d3.select(this).attr("class", "women");
+        });
 
     bar.append("rect")
         .attr("y", function(d) { return maxHeight - scale(d["Num.Men"]); })
         .attr("width", barWidth - 1)
         .attr("height", function(d) { return scale(d["Num.Men"]); })
-        .attr("class", "men");
+        .attr("class", "men")
+        .on('mouseover', function(d) {
+            d3.select(this).attr("class", "men-selected");
+        })
+        .on('mouseout', function(d) {
+            d3.select(this).attr("class", "men");
+        });
 
     chart.append("g")
         .attr("class", "axis")

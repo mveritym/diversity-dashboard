@@ -1,5 +1,7 @@
 .women { fill: thistle; }
-.men { fill: steelblue; }
+.men { fill: lightsteelblue; }
+.women-selected { fill: plum; }
+.men-selected { fill: steelblue; }
 
 .chart text {
   fill: black;
