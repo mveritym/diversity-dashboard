@@ -1,16 +1,24 @@
-function load_data () {
-    var spawn = require('child_process').spawn;
-    var prc = spawn('Rscript',  ['../../scripts/getGenderByRole.R']);
-
-    //noinspection JSUnresolvedFunction
-    prc.stdout.setEncoding('utf8');
-    prc.stdout.on('data', function (data) {
-        var str = data.toString()
-        var lines = str.split(/(\r?\n)/g);
-        console.log(lines.join(""));
+function get_data_file () {
+    $.ajax({
+      url: "/loadData",
+    })
+    .done(function(fileName) {
+        var fileName = fileName.match("\"(.+)\"")[1];
+        load_data(fileName);
+        return fileName;
     });
+}
 
-    prc.on('close', function (code) {
-        console.log('process exit code ' + code);
+function load_data (fileName) {
+    $.ajax({
+        type: "GET",
+        url: "/loadFile",
+        data: { fileName: fileName },
+        success: function(data) {
+            visualize(data);
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            alert("Status: " + xhr.status + "     Error: " + thrownError);
+        }
     });
 }

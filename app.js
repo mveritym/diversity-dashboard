@@ -10,12 +10,17 @@ app.get('/', function (req, res) {
 
 app.get('/loadData', function(req, res) {
 	data.load()
-	.then(function() {
-		res.sendStatus(200);
+	.then(function(outfile) {
+		res.status(200).send(outfile);
 	}, function() {
 		res.sendStatus(500);
 	})
 	.done();
+});
+
+app.get('/loadFile', function(req, res) {
+	var file = req.query.fileName;
+	res.sendFile(path.join(__dirname + '/' + file));
 });
 
 app.use(express.static('static', { etag: false }));

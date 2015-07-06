@@ -6,8 +6,9 @@ module.exports = {
 		var deferred = q.defer();
 		var rscript = exec('Rscript scripts/getGenderByRole.R',
 			function(error, stdout, stderr) {
+				var outfile = stdout;
 				if (error == null) {
-					deferred.resolve();
+					deferred.resolve(outfile);
 				} else {
 					deferred.reject();
 				}
