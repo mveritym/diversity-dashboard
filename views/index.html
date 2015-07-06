@@ -19,10 +19,16 @@
                 <h3 class="text-muted">Diversity Dashboard</h3>
             </div>
             <div class="jumbotron">
-                <svg class="chart"></svg>
+                <div id="include-chart"></div>
             </div>
         </div>
+
         <script type="text/javascript" src="js/loadData.js"></script>
         <script type="text/javascript" src="js/data.js"></script>
+        <script>
+            $(function() {
+                $("#include-chart").load("templates/chart.html");
+            });
+        </script>
     </body>
 </html>
