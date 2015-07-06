@@ -1,3 +1,10 @@
+$.getScript("js/dropzone.js", function() {
+    $("div#include-dropzone").dropzone({
+        url: "/upload-file",
+        paramName: 'testFile'
+    });
+});
+
 function get_data_file () {
     $.ajax({
       url: "/loadData",
