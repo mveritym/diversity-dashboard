@@ -2,6 +2,7 @@ var express = require('express');
 var busboy 	= require('connect-busboy');
 var fs 		= require('fs');
 var path 	= require('path');
+var mkdirp	= require('mkdirp');
 var data 	= require('./data');
 
 var app = express();
@@ -29,15 +30,18 @@ app.get('/analyze-data', function(req, res) {
 });
 
 app.post('/upload-file', function(req, res) {
-	var fstream;
-    req.pipe(req.busboy);
-    req.busboy.on('file', function (fieldname, file, filename) {
-        fstream = fs.createWriteStream(__dirname + '/data/input/' + filename);
-        file.pipe(fstream);
-        fstream.on('close', function () {
-            res.redirect('back');
-        });
-    });
+	var inputDataPath = __dirname + '/data/input/';
+	mkdirp(inputDataPath, function(err) {
+		var fstream;
+		req.pipe(req.busboy);
+	    req.busboy.on('file', function (fieldname, file, filename) {
+	        fstream = fs.createWriteStream(inputDataPath + filename);
+	        file.pipe(fstream);
+	        fstream.on('close', function () {
+	            res.redirect('back');
+	        });
+	    });
+	});
 });
 
 var server = app.listen(3000, function () {
