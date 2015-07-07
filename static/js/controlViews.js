@@ -1,5 +1,6 @@
 $(function() {
     show_file_uploader();
+    hide_spinner();
     hide_chart();
 })
 
@@ -9,6 +10,14 @@ function show_file_uploader () {
 
 function hide_file_uploader () {
     $("#include-dropzone").hide();
+}
+
+function show_spinner () {
+    $(".spinner").show();
+}
+
+function hide_spinner () {
+    $(".spinner").hide();
 }
 
 function show_chart () {

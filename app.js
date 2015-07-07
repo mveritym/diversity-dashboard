@@ -13,19 +13,19 @@ app.get('/', function (req, res) {
 	res.sendFile(path.join(__dirname + '/views/index.html'));
 });
 
-app.get('/loadData', function(req, res) {
-	data.load()
+app.get('/load-file', function(req, res) {
+	var file = req.query.fileName;
+	res.sendFile(path.join(__dirname + '/' + file));
+});
+
+app.get('/analyze-data', function(req, res) {
+	data.load(req.query.fileName)
 	.then(function(outfile) {
 		res.status(200).send(outfile);
 	}, function() {
 		res.sendStatus(500);
 	})
 	.done();
-});
-
-app.get('/loadFile', function(req, res) {
-	var file = req.query.fileName;
-	res.sendFile(path.join(__dirname + '/' + file));
 });
 
 app.post('/upload-file', function(req, res) {

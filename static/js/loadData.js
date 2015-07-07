@@ -21,28 +21,28 @@ function upload_file () {
     }
 
     function processFile (file) {
-        console.log("Uploaded file! " + file.name);
         hide_file_uploader();
-        show_chart();
+        analyze_data(file);
     }
 }
 
-function get_data_file () {
+function get_data_file (fileName) {
     $.ajax({
-      url: "/loadData",
-    })
-    .done(function(fileName) {
-        var matchedName = fileName.match("\"(.+)\""); // if file name was printed by R script, need to extract file name
-        fileName = matchedName ? matchedName[1] : fileName;
-        load_data(fileName);
-        return fileName;
+        type: "GET",
+        url: "/analyze-data",
+        data: { fileName: fileName },
+        success: function(outfile) {
+            var matchedName = outfile.match("\"(.+)\""); // if file name was printed by R script, need to extract file name
+            outfile = matchedName ? matchedName[1] : outfile;
+            load_data(outfile);
+        }
     });
 }
 
 function load_data (fileName) {
     $.ajax({
         type: "GET",
-        url: "/loadFile",
+        url: "/load-file",
         data: { fileName: fileName },
         success: function(data) {
             visualize(data);
