@@ -29,7 +29,7 @@ app.get('/analyze-data', function(req, res) {
 app.post('/upload-file', function(req, res) {
 	data.upload(req)
 	.then(function() {
-		res.redirect('back');
+		res.sendStatus(200);
 	}, function() {
 		res.sendStatus(500);
 	}).done();
