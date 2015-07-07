@@ -22,6 +22,7 @@ function upload_file () {
 
     function processFile (file) {
         hide_file_uploader();
+        show_spinner();
         analyze_data(file);
     }
 }
@@ -45,6 +46,8 @@ function load_data (fileName) {
         url: "/load-file",
         data: { fileName: fileName },
         success: function(data) {
+            hide_spinner();
+            show_chart();
             visualize(data);
         },
         error: function(xhr, ajaxOptions, thrownError) {

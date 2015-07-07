@@ -1,14 +1,10 @@
 var csv_file_name;
 
 function analyze_data(file) {
-    show_spinner();
     csv_file_name = get_data_file(file.name);
 }
 
 function visualize (csv_contents) {
-
-    hide_spinner();
-    show_chart();
 
     var margin = {top: 20, right: 30, bottom: 30, left: 40},
         axisWidth = 40,
