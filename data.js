@@ -1,5 +1,5 @@
 module.exports = {
-	load: function () {
+	load: function (file) {
 		var fs = require('fs');
 		var path = require('path');
 		var exec = require('child_process').exec;
@@ -10,7 +10,7 @@ module.exports = {
 		if (fs.existsSync(path.join(__dirname + '/' + outfile))) {
 			deferred.resolve(outfile);
 		} else {
-			exec('Rscript scripts/getGenderByRole.R',
+			exec('Rscript scripts/getGenderByRole.R data/input/'+file,
 				function(error, stdout, stderr) {
 					var outfile = stdout;
 					if (error == null) {

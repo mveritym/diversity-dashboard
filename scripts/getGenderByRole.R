@@ -1,5 +1,7 @@
 library(dplyr)
 
+infile <- commandArgs(TRUE)[1]
+
 tech_roles <- c("Dev", "UI Dev", "QA", "DevOps", "Infra Cons", "Net Admin", "Tech Admin", "Info Sec")
 
 subdir <- "data/generated"
@@ -8,7 +10,7 @@ if (!file.exists(generated_dir)){
     dir.create(file.path(generated_dir))
 }
 
-consultants_raw <- read.csv("data/input/consultant_info.csv")
+consultants_raw <- read.csv(infile)
 consultants <- select(consultants_raw, -(Name), -(Home.Office:X), -(Available.From:Planned.Assignment))
 consultants <- filter(consultants, Gender != "Unknown")
 
