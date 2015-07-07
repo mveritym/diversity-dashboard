@@ -1,29 +1,29 @@
 var csv_file_name;
 
+var margin = {top: 20, right: 30, bottom: 30, left: 40},
+    axisWidth = 40,
+    maxWidth = 960 - margin.left - margin.right,
+    maxHeight = 500 - margin.top - margin.bottom,
+    textBufferWidth = 5;
+
+var xScale = d3.scale.linear()
+    .range([0, maxHeight]);
+
+var yScale = d3.scale.linear()
+    .range([0, maxHeight]);
+
+var yAxis = d3.svg.axis()
+    .scale(yScale)
+    .orient("left")
+    .ticks(20);
+
+var chart = d3.select(".chart");
+
 function analyze_data(file) {
     csv_file_name = get_data_file(file.name);
 }
 
 function visualize (csv_contents) {
-
-    var margin = {top: 20, right: 30, bottom: 30, left: 40},
-        axisWidth = 40,
-        maxWidth = 960 - margin.left - margin.right,
-        maxHeight = 500 - margin.top - margin.bottom,
-        textBufferWidth = 5;
-
-    var scale = d3.scale.linear()
-        .range([0, maxHeight]);
-
-    var yScale = d3.scale.linear()
-        .range([0, maxHeight]);
-
-    var yAxis = d3.svg.axis()
-        .scale(yScale)
-        .orient("left")
-        .ticks(20);
-
-    var chart = d3.select(".chart");
 
     var data = d3.csv.parse(csv_contents, function(d) {
         return {
@@ -34,7 +34,7 @@ function visualize (csv_contents) {
         };
     });
 
-    scale.domain([0, d3.max(data, function(d) { return get_total(d); })]);
+    xScale.domain([0, d3.max(data, function(d) { return get_total(d); })]);
     yScale.domain([d3.max(data, function(d) { return get_total(d); }), 0]);
 
     var barWidth = maxWidth / Object.keys(data).length;
@@ -51,9 +51,9 @@ function visualize (csv_contents) {
         .attr("dy", "1.75em");
 
     bar.append("rect")
-        .attr("y", function(d) { return maxHeight - scale(get_total(d)) })
+        .attr("y", function(d) { return maxHeight - xScale(get_total(d)) })
         .attr("width", barWidth - 1)
-        .attr("height", function(d) { return scale(get_total(d)); })
+        .attr("height", function(d) { return xScale(get_total(d)); })
         .attr("class", "women")
         .on('mouseover', function(d) {
             d3.select(this)
@@ -64,9 +64,9 @@ function visualize (csv_contents) {
         });
 
     bar.append("rect")
-        .attr("y", function(d) { return maxHeight - scale(d["num_men"]); })
+        .attr("y", function(d) { return maxHeight - xScale(d["num_men"]); })
         .attr("width", barWidth - 1)
-        .attr("height", function(d) { return scale(d["num_men"]); })
+        .attr("height", function(d) { return xScale(d["num_men"]); })
         .attr("class", "men")
         .on('mouseover', function(d) {
             d3.select(this).attr("class", "men-selected");
