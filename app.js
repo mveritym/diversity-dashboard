@@ -32,7 +32,6 @@ app.post('/upload-file', function(req, res) {
 	var fstream;
     req.pipe(req.busboy);
     req.busboy.on('file', function (fieldname, file, filename) {
-        console.log("Uploading: " + filename);
         fstream = fs.createWriteStream(__dirname + '/data/input/' + filename);
         file.pipe(fstream);
         fstream.on('close', function () {
