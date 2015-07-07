@@ -1,9 +1,31 @@
-$.getScript("js/dropzone.js", function() {
-    $("div#include-dropzone").dropzone({
+function upload_file () {
+
+    var errorBar = $("#dropzone-error span");
+    errorBar.hide();
+
+    var dropzone = $("div#include-dropzone").dropzone({
         url: "/upload-file",
-        paramName: 'testFile'
+        maxFiles: 1,
+        acceptedFiles: '.csv',
+        clickable: true,
+        init: function () {
+            this.on('error', removeFile);
+            this.on('addedfile', processFile);
+        }
     });
-});
+
+    function removeFile (file, message) {
+        this.removeFile(file);
+        errorBar.text(message).show();
+        errorBar.fadeOut(3000);
+    }
+
+    function processFile (file) {
+        console.log("Uploaded file! " + file.name);
+        hide_file_uploader();
+        show_chart();
+    }
+}
 
 function get_data_file () {
     $.ajax({
@@ -30,3 +52,9 @@ function load_data (fileName) {
         }
     });
 }
+
+$(function() {
+    $.getScript("js/dropzone.js", function() {
+        upload_file();
+    });
+})
