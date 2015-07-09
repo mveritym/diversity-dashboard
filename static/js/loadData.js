@@ -3,14 +3,26 @@ function upload_file () {
     var errorBar = $("#dropzone-error span");
     errorBar.hide();
 
-    var dropzone = $("div#include-dropzone").dropzone({
+    window.Dropzone;
+    Dropzone.autoDiscover = false;
+
+    var dropzone = new Dropzone(".dropzone", {
         url: "/upload-file",
         maxFiles: 1,
         acceptedFiles: '.csv',
         clickable: true,
         init: function () {
             this.on('error', removeFile);
-            this.on('addedfile', processFile);
+            //this.on('addedfile', processFile);
+
+            $.ajax({
+                type: "GET",
+                url: "/get-existing-files",
+                success: function(result) {
+                    var existingFile = { name: result.file, size: result.fsize }
+                    dropzone.options.addedfile.call(dropzone, existingFile);
+                }
+            });
         }
     });
 

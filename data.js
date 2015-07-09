@@ -1,10 +1,28 @@
 var exec 	= require('child_process').exec;
+var fork 	= require('child_process').fork;
 var fs 		= require('fs');
+var mime	= require('mime');
 var mkdirp	= require('mkdirp');
 var path 	= require('path');
 var q 		= require('q');
 
+var inputDataDir = __dirname + '/data/input/';
+
 module.exports = {
+	getExistingFiles: function () {
+		var deferred = q.defer();
+		fs.readdir(inputDataDir, function (err, files) {
+			files.forEach(function(file) {
+				if (mime.lookup(file) == 'text/csv') {
+					var size = fs.statSync(inputDataDir + file).size;
+					deferred.resolve({ file: file, fsize: size });
+				}
+			});
+			deferred.reject();
+		});
+		return deferred.promise;
+	},
+
 	analyze: function (file) {
 		var deferred = q.defer();
 		var outfile = 'data/generated/gender_by_role.csv';
@@ -26,12 +44,11 @@ module.exports = {
 
 	upload: function (req) {
 		var deferred = q.defer();
-		var inputDataPath = __dirname + '/data/input/';
-		mkdirp(inputDataPath, function(err) {
+		mkdirp(inputDataDir, function(err) {
 			var fstream;
 			req.pipe(req.busboy);
 		    req.busboy.on('file', function (fieldname, file, filename) {
-		        fstream = fs.createWriteStream(inputDataPath + filename);
+		        fstream = fs.createWriteStream(inputDataDir + filename);
 		        file.pipe(fstream);
 		        fstream.on('close', function () {
 					deferred.resolve();

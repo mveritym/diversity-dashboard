@@ -12,6 +12,15 @@ app.get('/', function (req, res) {
 	res.sendFile(path.join(__dirname + '/views/index.html'));
 });
 
+app.get('/get-existing-files', function (req, res) {
+	data.getExistingFiles()
+	.then(function(result) {
+		res.status(200).send(result);
+	}, function() {
+		res.sendStatus(200);
+	}).done();
+});
+
 app.get('/load-file', function(req, res) {
 	var file = req.query.fileName;
 	res.sendFile(path.join(__dirname + '/' + file));
