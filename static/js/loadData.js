@@ -21,6 +21,8 @@ function upload_file () {
                 success: function(result) {
                     var existingFile = { name: result.file, size: result.fsize }
                     dropzone.options.addedfile.call(dropzone, existingFile);
+                    dropzone.options.thumbnail.call(dropzone, existingFile, "images/csv_icon.png");
+                    dropzone.emit("complete", existingFile);
                 }
             });
         }
