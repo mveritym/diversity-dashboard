@@ -18,7 +18,11 @@ function upload_file () {
             this.on('success', function (file) {
                 validate_file(file, function(){}, remove_file);
             });
-            
+            this.on('complete', function (file) {
+                console.log(file);
+                shrink_dropzone();
+            });
+
             $.ajax({
                 type: "GET",
                 url: "/get-existing-files",
