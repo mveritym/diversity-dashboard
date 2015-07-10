@@ -18,31 +18,31 @@ function upload_file () {
             this.on('success', function (file) {
                 validate_file(file, function(){}, remove_file);
             });
-
+            
             $.ajax({
                 type: "GET",
                 url: "/get-existing-files",
                 success: function(result) {
                     if (result.length != 0) {
-                        validate_file(result, showExistingFile, function(){});
+                        validate_file(result, show_existing_file, function(){});
                     }
                 }
             });
         }
     });
+}
 
-    function showExistingFile(result) {
-        var existingFile = { name: result.file, size: result.fsize }
-        dropzone.options.addedfile.call(dropzone, existingFile);
-        dropzone.options.thumbnail.call(dropzone, existingFile, "images/csv_icon.png");
-        dropzone.emit("complete", existingFile);
-    }
+function show_existing_file(result) {
+    var existingFile = { name: result.name, size: result.size }
+    dropzone.options.addedfile.call(dropzone, existingFile);
+    dropzone.options.thumbnail.call(dropzone, existingFile, "images/csv_icon.png");
+    dropzone.emit("complete", existingFile);
+}
 
-    function processFile (file) {
-        hide_file_uploader();
-        show_spinner();
-        analyze_data(file);
-    }
+function start_analysis (file) {
+    hide_file_uploader();
+    show_spinner();
+    analyze_data(file);
 }
 
 function remove_file (file, message) {
@@ -66,7 +66,7 @@ function validate_file (file, onValid, onInvalid) {
     });
 }
 
-function get_data_file (fileName) {
+function analyze_data (fileName) {
     $.ajax({
         type: "GET",
         url: "/analyze-data",
