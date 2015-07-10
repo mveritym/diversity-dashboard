@@ -1,37 +1,41 @@
+var dropzone, errorBar;
+
 function upload_file () {
 
-    var errorBar = $("#dropzone-error span");
+    errorBar = $("#dropzone-error span");
     errorBar.hide();
 
     window.Dropzone;
     Dropzone.autoDiscover = false;
 
-    var dropzone = new Dropzone(".dropzone", {
+    dropzone = new Dropzone(".dropzone", {
         url: "/upload-file",
         maxFiles: 1,
         acceptedFiles: '.csv',
         clickable: true,
         init: function () {
-            this.on('error', removeFile);
-            //this.on('addedfile', processFile);
+            this.on('error', remove_file);
+            this.on('success', function (file) {
+                validate_file(file, function(){}, remove_file);
+            });
 
             $.ajax({
                 type: "GET",
                 url: "/get-existing-files",
                 success: function(result) {
-                    var existingFile = { name: result.file, size: result.fsize }
-                    dropzone.options.addedfile.call(dropzone, existingFile);
-                    dropzone.options.thumbnail.call(dropzone, existingFile, "images/csv_icon.png");
-                    dropzone.emit("complete", existingFile);
+                    if (result.length != 0) {
+                        validate_file(result, showExistingFile, function(){});
+                    }
                 }
             });
         }
     });
 
-    function removeFile (file, message) {
-        this.removeFile(file);
-        errorBar.text(message).show();
-        errorBar.fadeOut(3000);
+    function showExistingFile(result) {
+        var existingFile = { name: result.file, size: result.fsize }
+        dropzone.options.addedfile.call(dropzone, existingFile);
+        dropzone.options.thumbnail.call(dropzone, existingFile, "images/csv_icon.png");
+        dropzone.emit("complete", existingFile);
     }
 
     function processFile (file) {
@@ -39,6 +43,27 @@ function upload_file () {
         show_spinner();
         analyze_data(file);
     }
+}
+
+function remove_file (file, message) {
+    dropzone.removeFile(file);
+    errorBar.text(message).show();
+    errorBar.fadeOut(3000);
+}
+
+function validate_file (file, onValid, onInvalid) {
+    $.ajax({
+        type: "GET",
+        url: "/validate-file",
+        data: { fileName: file.name },
+        success: function(isValid) {
+            if (isValid) {
+                onValid(file);
+            } else {
+                onInvalid(file, "Missing headers");
+            }
+        }
+    });
 }
 
 function get_data_file (fileName) {

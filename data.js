@@ -15,10 +15,23 @@ module.exports = {
 			files.forEach(function(file) {
 				if (mime.lookup(file) == 'text/csv') {
 					var size = fs.statSync(inputDataDir + file).size;
-					deferred.resolve({ file: file, fsize: size });
+					deferred.resolve({ name: file, size: size });
 				}
 			});
 			deferred.reject();
+		});
+		return deferred.promise;
+	},
+
+	validate: function (file) {
+		var deferred = q.defer();
+		var cmd = 'Rscript scripts/validateInputFile.R data/input/' + file;
+		exec(cmd, function(error, stdout, stderr) {
+			if (stderr == '') {
+				deferred.resolve(true);
+			} else {
+				deferred.resolve(false);
+			}
 		});
 		return deferred.promise;
 	},

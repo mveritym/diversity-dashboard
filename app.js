@@ -17,7 +17,17 @@ app.get('/get-existing-files', function (req, res) {
 	.then(function(result) {
 		res.status(200).send(result);
 	}, function() {
-		res.sendStatus(200);
+		res.status(200).send(null);
+	}).done();
+});
+
+app.get('/validate-file', function (req, res) {
+	var file = req.query.fileName;
+	data.validate(file)
+	.then(function(isValid) {
+		res.status(200).send(isValid);
+	}, function() {
+		res.status(500);
 	}).done();
 });
 
