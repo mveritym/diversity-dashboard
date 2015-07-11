@@ -20,7 +20,7 @@ var yAxis = d3.svg.axis()
 var chart = d3.select(".chart");
 
 function analyze_data(file) {
-    csv_file_name = dataManager.analyze_data(file.name);
+    csv_file_name = file_manager().analyze_data(file.name);
 }
 
 function visualize (csv_contents) {

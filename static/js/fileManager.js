@@ -1,4 +1,4 @@
-var dataManager = function () {
+var file_manager = function () {
 
     var dropzone, errorBar;
 
@@ -113,6 +113,6 @@ var dataManager = function () {
 
 $(function() {
     $.getScript("js/dropzone.js", function() {
-        dataManager().upload_file();
+        file_manager().upload_file();
     });
 })
