@@ -2,6 +2,8 @@ var file_manager = function () {
 
     var dropzone, errorBar;
 
+    var viewController = view_controller();
+
     var upload_file = function () {
         errorBar = $("#dropzone-error span");
         errorBar.hide();
@@ -26,8 +28,7 @@ var file_manager = function () {
     };
 
     var add_file = function(file) {
-        console.log('adding');
-        shrink_dropzone();
+        viewController.shrink_dropzone();
         $("button.success").click(function() {
             start_analysis(file.name);
         });
@@ -73,9 +74,8 @@ var file_manager = function () {
     };
 
     var start_analysis = function (fileName) {
-        hide_file_uploader();
-        hide_submit_buttons();
-        show_spinner();
+        viewController.hide_all();
+        viewController.show_spinner();
         analyze_data(fileName);
     };
 
@@ -98,8 +98,8 @@ var file_manager = function () {
             url: "/load-file",
             data: { fileName: fileName },
             success: function(data) {
-                hide_spinner();
-                show_chart();
+                viewController.hide_spinner();
+                viewController.show_chart();
                 visualize(data);
             }
         });
