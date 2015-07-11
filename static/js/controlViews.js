@@ -34,7 +34,6 @@ function shrink_dropzone () {
     $("#dropzone-container").animate({
         width: shrunkWidth + "px"
     }, 1500, "easeOutExpo", function() {
-        console.log($(".jumbotron").width() - shrunkWidth);
         show_submit_buttons($(".jumbotron").width() - shrunkWidth);
     });
 }
