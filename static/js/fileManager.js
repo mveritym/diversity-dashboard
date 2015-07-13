@@ -35,6 +35,12 @@ var file_manager = function () {
         $("button.success").click(function() {
             start_analysis(file.name);
         });
+        $("button.upload-again").click(function() {
+            viewController.expand_dropzone();
+            console.log("here");
+            remove_file(file);
+            delete_file(file);
+        });
     };
 
     var remove_file = function (file, message) {
@@ -52,9 +58,9 @@ var file_manager = function () {
                 console.log(err);
             }
         })
-    }
+    };
 
-    var get_existing_files= function() {
+    var get_existing_files = function() {
         $.ajax({
             type: "GET",
             url: "/get-existing-files",

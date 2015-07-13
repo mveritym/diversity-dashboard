@@ -40,6 +40,11 @@ var view_controller = function () {
         });
     };
 
+    var expand_dropzone = function () {
+        dropzone.width('100%');
+        hide_submit_buttons();
+    };
+
     var position_submit_buttons = function (marginRight) {
         var buttonWidth = submitButtons.width();
         submitButtons.css({ 'margin-right': marginRight - buttonWidth });
@@ -67,7 +72,8 @@ var view_controller = function () {
         show_spinner: show_spinner,
         hide_spinner: hide_spinner,
         show_chart: show_chart,
-        shrink_dropzone: shrink_dropzone
+        shrink_dropzone: shrink_dropzone,
+        expand_dropzone: expand_dropzone
     };
 };
 
