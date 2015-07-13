@@ -24,7 +24,10 @@ var file_manager = function () {
     };
 
     var on_dropzone_success= function(file) {
-        validate_file(file, add_file, remove_file);
+        validate_file(file, add_file, function(file, message) {
+            remove_file(file, message);
+            delete_file(file);
+        });
     };
 
     var add_file = function(file) {
@@ -34,11 +37,22 @@ var file_manager = function () {
         });
     };
 
-    var remove_file= function (file, message) {
+    var remove_file = function (file, message) {
         dropzone.removeFile(file);
         errorBar.text(message).show();
         errorBar.fadeOut(3000);
     };
+
+    var delete_file = function (file) {
+        $.ajax({
+            type: "GET",
+            url: "/delete-file",
+            data: { fileName: file.name },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+    }
 
     var get_existing_files= function() {
         $.ajax({
@@ -46,7 +60,7 @@ var file_manager = function () {
             url: "/get-existing-files",
             success: function(result) {
                 if (result.length != 0) {
-                    validate_file(result, show_existing_file, function(){});
+                    validate_file(result, show_existing_file, delete_file);
                 }
             }
         });

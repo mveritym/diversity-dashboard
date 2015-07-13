@@ -6,7 +6,7 @@ var mkdirp	= require('mkdirp');
 var path 	= require('path');
 var q 		= require('q');
 
-var inputDataDir = __dirname + '/data/input/';
+var inputDataDir = path.join(__dirname,'/data/input/');
 
 module.exports = {
 	getExistingFiles: function () {
@@ -31,6 +31,18 @@ module.exports = {
 				deferred.resolve(true);
 			} else {
 				deferred.resolve(false);
+			}
+		});
+		return deferred.promise;
+	},
+
+	deleteFile: function (file) {
+		var deferred = q.defer();
+		fs.unlink(path.join(inputDataDir, file), function(err) {
+			if (err) {
+				deferred.reject("Failed to delete file " + file);
+			} else {
+				deferred.resolve();
 			}
 		});
 		return deferred.promise;

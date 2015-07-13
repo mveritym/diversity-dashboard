@@ -31,6 +31,16 @@ app.get('/validate-file', function (req, res) {
 	}).done();
 });
 
+app.get('/delete-file', function (req, res) {
+	var file = req.query.fileName;
+	data.deleteFile(file)
+	.then(function() {
+		res.sendStatus(200);
+	}, function(err) {
+		res.status(500).send(err);
+	}).done();
+});
+
 app.get('/load-file', function(req, res) {
 	var file = req.query.fileName;
 	res.sendFile(path.join(__dirname + '/' + file));
