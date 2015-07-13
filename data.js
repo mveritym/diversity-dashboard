@@ -5,8 +5,10 @@ var mime	= require('mime');
 var mkdirp	= require('mkdirp');
 var path 	= require('path');
 var q 		= require('q');
+var rimraf	= require('rimraf');
 
-var inputDataDir = path.join(__dirname,'/data/input/');
+var inputDataDir = path.join(__dirname, '/data/input/');
+var analysisDir = path.join(__dirname, '/data/generated/');
 
 module.exports = {
 	getExistingFiles: function () {
@@ -48,10 +50,22 @@ module.exports = {
 		return deferred.promise;
 	},
 
+	deleteAnalysis: function () {
+		var deferred = q.defer();
+		rimraf(analysisDir, function (err) {
+			if (err) {
+				deferred.reject("Failed to delete analysis output directory");
+			} else {
+				deferred.resolve();
+			}
+		});
+		return deferred.promise;
+	},
+
 	analyze: function (file) {
 		var deferred = q.defer();
 		var outfile = 'data/generated/gender_by_role.csv';
-		if (fs.existsSync(path.join(__dirname + '/' + outfile))) {
+		if (fs.existsSync(path.join(__dirname, outfile))) {
 			deferred.resolve(outfile);
 		} else {
 			var cmd = 'Rscript scripts/getGenderByRole.R data/input/' + file;

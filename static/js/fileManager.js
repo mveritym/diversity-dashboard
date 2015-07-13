@@ -39,13 +39,16 @@ var file_manager = function () {
             viewController.expand_dropzone();
             remove_file(file);
             delete_file(file);
+            delete_analysis();
         });
     };
 
     var remove_file = function (file, message) {
         dropzone.removeFile(file);
-        errorBar.text(message).show();
-        errorBar.fadeOut(3000);
+        if (message) {
+            errorBar.text(message).show();
+            errorBar.fadeOut(3000);
+        }
     };
 
     var delete_file = function (file) {
@@ -56,8 +59,18 @@ var file_manager = function () {
             error: function (err) {
                 console.log(err);
             }
-        })
+        });
     };
+
+    var delete_analysis = function (file) {
+        $.ajax({
+            type: "GET",
+            url: "/delete-analysis",
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
 
     var get_existing_files = function() {
         $.ajax({
