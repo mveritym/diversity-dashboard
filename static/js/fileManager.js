@@ -37,7 +37,6 @@ var file_manager = function () {
         });
         $("button.upload-again").click(function() {
             viewController.expand_dropzone();
-            console.log("here");
             remove_file(file);
             delete_file(file);
         });
