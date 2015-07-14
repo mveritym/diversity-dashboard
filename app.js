@@ -1,7 +1,8 @@
-var express = require('express');
 var busboy 	= require('connect-busboy');
-var path 	= require('path');
 var data 	= require('./data');
+var http	= require('http');
+var express = require('express');
+var path 	= require('path');
 
 var app = express();
 
@@ -73,8 +74,11 @@ app.post('/upload-file', function(req, res) {
 	}).done();
 });
 
-var server = app.listen(3000, function () {
-	var host = server.address().address;
-	var port = server.address().port;
-	console.log('Diversity Dashboard app listening at http://%s:%s', host, port);
-});
+module.exports = app;
+
+app.set('port', process.env.PORT || 3000);
+if (!module.parent) {
+	http.createServer(app).listen(app.get('port'), function(){
+		console.log("Diversity Dashboard listening on port " + app.get('port'));
+	});
+}
