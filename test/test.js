@@ -12,11 +12,13 @@ describe('home page', function() {
     });
 
     before(function(done) {
-        this.browser.visit('/', done);
+        return this.browser.visit('/', done);
     });
 
     it('should have a title', function() {
-        assert.equal(this.browser.text('h3'), 'Diversity Dashboard');
+        this.browser.assert.success();
+        this.browser.assert.text('h3', 'Diversity Dashboard');
+        //this.browser.assert.text('#dropzone-error', '');
     });
 
     after(function(done) {
