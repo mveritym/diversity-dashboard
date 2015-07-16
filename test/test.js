@@ -1,27 +1,39 @@
-process.env.NODE_ENV = 'test';
-
 var app     = require('../app');
-var assert  = require('assert');
-var Browser = require('zombie');
-var http    = require('http');
+var Browser  = require('zombie');
 
 describe('home page', function() {
-    before(function() {
-        this.server = http.createServer(app).listen(3000);
-        this.browser = new Browser({ site: 'http://localhost:3000' });
-    });
-
     before(function(done) {
-        return this.browser.visit('/', done);
+        this.browser = new Browser({ site: "http://localhost:3000"});
+        this.browser.visit('/', done);
     });
 
     it('should have a title', function() {
         this.browser.assert.success();
         this.browser.assert.text('h3', 'Diversity Dashboard');
-        //this.browser.assert.text('#dropzone-error', '');
     });
 
-    after(function(done) {
-        this.server.close(done);
+    it('should have hidden submit buttons', function() {
+        this.browser.assert.element('#submit-buttons');
+        this.browser.assert.elements('#submit-buttons > button', 2);
+        this.browser.assert.style('#submit-buttons', 'display', 'none');
+    });
+
+    it('should have a hidden spinner', function() {
+        this.browser.assert.element('.spinner');
+        this.browser.assert.elements('.spinner > div', 5);
+        this.browser.assert.style('.spinner', 'display', 'none');
+    });
+
+    it('should have a dropzone', function() {
+        this.browser.assert.element('#dropzone-container');
+        this.browser.assert.style('#dropzone-container', 'display', '');
+        this.browser.assert.element('#dropzone-error');
+        this.browser.assert.text('#dropzone-error > span', '');
+        this.browser.assert.element('#dropzone-container > .dropzone');
+    });
+
+    it('should have a hidden chart', function() {
+        this.browser.assert.element('#chart-container');
+        this.browser.assert.style('#chart-container', 'display', 'none');
     });
 });

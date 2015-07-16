@@ -5,7 +5,7 @@ var view_controller = function () {
     var dropzone = $("#dropzone-container");
     var submitButtons = $("#submit-buttons");
     var spinner = $(".spinner");
-    var chart = $("#include-chart");
+    var chart = $("#chart-container");
 
     var show_dropzone = function () {
         dropzone.show();
@@ -81,4 +81,5 @@ $(function() {
     var viewController = view_controller();
     viewController.hide_all();
     viewController.show_dropzone();
+    //viewController.show_chart();
 });
