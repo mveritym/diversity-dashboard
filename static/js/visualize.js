@@ -1,23 +1,24 @@
 var csv_file_name;
 
-var margin = {top: 20, right: 30, bottom: 30, left: 40},
+var margin = {top: 50, right: 30, bottom: 40, left: 40},
     axisWidth = 40,
-    maxWidth = 960 - margin.left - margin.right,
-    maxHeight = 500 - margin.top - margin.bottom,
+    maxWidth = 1020,
+    maxHeight = 500,
     textBufferWidth = 5;
 
-var xScale = d3.scale.linear()
-    .range([0, maxHeight]);
+var x = d3.scale.ordinal().rangeRoundBands([0, maxWidth]),
+    y = d3.scale.linear().range([0, maxHeight]),
+    z = d3.scale.ordinal().range(["lightsteelblue", "thistle"]);
 
-var yScale = d3.scale.linear()
-    .range([0, maxHeight]);
+console.log(y);
 
 var yAxis = d3.svg.axis()
-    .scale(yScale)
+    .scale(y)
     .orient("left")
-    .ticks(20);
 
-var chart = d3.select(".chart");
+var chart = d3.select(".chart")
+    .attr("width", maxWidth)
+    .attr("height", maxHeight + margin.bottom + margin.top)
 
 function analyze_data(file) {
     csv_file_name = file_manager().analyze_data(file.name);
@@ -34,64 +35,53 @@ function visualize (csv_contents) {
         };
     });
 
-    xScale.domain([0, d3.max(data, function(d) { return get_total(d); })]);
-    yScale.domain([d3.max(data, function(d) { return get_total(d); }), 0]);
+    var genders = d3.layout.stack()(["num_men", "num_women"].map(function(gender) {
+        return data.map(function(d) {
+            return {x: d.role, y: +d[gender]};
+        });
+    }));
 
-    var barWidth = maxWidth / Object.keys(data).length;
+    x.domain(genders[0].map(function(d, i) { return i; }));
+    y.domain([0, d3.max(genders[genders.length - 1], function(d) { return d.y0 + d.y; })]);
 
-    var bar = chart.selectAll("g")
-        .data(data)
+    var rule = chart.selectAll("rule")
+        .data(y.ticks(10).slice(1))
         .enter().append("g")
-        .attr("transform", function(d, index) { return "translate(" + ((index * barWidth) + axisWidth) + ",0)"; });
-
-    bar.append("text")
-        .text(function(d) { return d["role"]; })
-        .attr("x", function(d) { return - maxHeight - textBufferWidth; })
-        .attr("transform", "rotate(270)")
-        .attr("dy", "1.75em");
-
-    bar.append("rect")
-        .attr("y", function(d) { return maxHeight - xScale(get_total(d)) })
-        .attr("width", barWidth - 1)
-        .attr("height", function(d) { return xScale(get_total(d)); })
-        .attr("class", "women")
-        .on('mouseover', function(d) {
-            d3.select(this)
-                .attr("class", "women-selected");
-        })
-        .on('mouseout', function(d) {
-            d3.select(this).attr("class", "women");
-        });
-
-    bar.append("rect")
-        .attr("y", function(d) { return maxHeight - xScale(d["num_men"]); })
-        .attr("width", barWidth - 1)
-        .attr("height", function(d) { return xScale(d["num_men"]); })
-        .attr("class", "men")
-        .on('mouseover', function(d) {
-            d3.select(this).attr("class", "men-selected");
-        })
-        .on('mouseout', function(d) {
-            d3.select(this).attr("class", "men");
-        });
-
-    chart.append("g")
         .attr("class", "axis")
-        .attr("transform", "translate(" + (axisWidth-5) + ",0)")
-        .call(yAxis);
+        .attr("transform", function(d) { return "translate(20," + (maxHeight - y(d) - margin.bottom + margin.top) + ")"; });
 
-    chart
-        .attr("height", (maxHeight + getMaxTextLength() + textBufferWidth))
-        .attr("width", (maxWidth + axisWidth));
+    rule.append("line")
+        .attr("x2", maxWidth - 35)
+        .attr("transform", "translate(10,0)")
+        .style("stroke", "lightgray")
+        .style("stroke-opacity", function(d) { return d ? .5 : null; });
 
-    function get_total(d) {
-        var total =  parseInt(d["num_men"]) + parseInt(d["num_women"]);
-        return total;
-    }
+    rule.append("text")
+        .attr("x", 0)
+        .attr("dy", "0.35em")
+        .text(d3.format(",d"));
 
-    function getMaxTextLength() {
-        return d3.max(d3.selectAll("text")[0], function(text) {
-            return text.getBBox().width;
-        });
-    }
+    var gender = chart.selectAll("g.gender")
+        .data(genders)
+        .enter().append("g")
+        .style("fill", function(d, i) { return z(i); })
+        .style("stroke", function(d, i) { return d3.rgb(z(i)).darker(); });
+
+    var rect = gender.selectAll("rect")
+        .data(Object)
+        .enter().append("rect")
+        .attr("x", function(d, i) { return x(i); })
+        .attr("y", function(d) { return maxHeight - y(d.y0) - y(d.y) - margin.bottom + margin.top; })
+        .attr("height", function(d) { return y(d.y); })
+        .attr("width", x.rangeBand());
+
+    var label = chart.selectAll("text")
+        .data(genders[0], function(d) { return d.x; })
+        .enter().append("text")
+        .attr("x", function(d) { return - maxHeight - textBufferWidth + margin.bottom - margin.top; })
+        .attr("y", function(d, i) { return x(i) + x.rangeBand()/2; })
+        .attr("transform", "rotate(270)")
+        .attr("text-anchor", "middle")
+        .attr("dy", ".71em")
+        .text(function(d) { return d.x; });
 }
