@@ -10,8 +10,6 @@ var x = d3.scale.ordinal().rangeRoundBands([0, maxWidth]),
     y = d3.scale.linear().range([0, maxHeight]),
     z = d3.scale.ordinal().range(["lightsteelblue", "thistle"]);
 
-console.log(y);
-
 var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left")
@@ -65,7 +63,12 @@ function visualize (csv_contents) {
         .data(genders)
         .enter().append("g")
         .style("fill", function(d, i) { return z(i); })
-        .style("stroke", function(d, i) { return d3.rgb(z(i)).darker(); });
+        .style("stroke", function(d, i) { return d3.rgb(z(i)).darker(); })
+        .on('mouseover', function(d,i) {
+            var eh = d3.select(this);
+            // console.log(d3.select(eh[0][0]).selectAll("rect")[0][i]);
+            // console.log(d3.select(eh[0]));
+        });
 
     var rect = gender.selectAll("rect")
         .data(Object)
@@ -73,7 +76,21 @@ function visualize (csv_contents) {
         .attr("x", function(d, i) { return x(i); })
         .attr("y", function(d) { return maxHeight - y(d.y0) - y(d.y) - margin.bottom + margin.top; })
         .attr("height", function(d) { return y(d.y); })
-        .attr("width", x.rangeBand());
+        .attr("width", x.rangeBand())
+        .on('mouseover', function(d,i) {
+            for(g = 0; g < gender[0].length; g++) {
+                var genderBar = d3.select(d3.select(gender[0][g]).selectAll("rect")[0][i]);
+                var newColor = d3.rgb(genderBar.style("stroke")).darker(0.1);
+                genderBar.style("fill", newColor);
+            }
+        })
+        .on('mouseout', function(d,i) {
+            for(g = 0; g < gender[0].length; g++) {
+                var genderBar = d3.select(d3.select(gender[0][g]).selectAll("rect")[0][i]);
+                var newColor = d3.rgb(genderBar.style("stroke")).brighter();
+                genderBar.style("fill", newColor);
+            }
+        });
 
     var label = chart.selectAll("text")
         .data(genders[0], function(d) { return d.x; })
