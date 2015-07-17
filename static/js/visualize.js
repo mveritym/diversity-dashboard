@@ -63,12 +63,7 @@ function visualize (csv_contents) {
         .data(genders)
         .enter().append("g")
         .style("fill", function(d, i) { return z(i); })
-        .style("stroke", function(d, i) { return d3.rgb(z(i)).darker(); })
-        .on('mouseover', function(d,i) {
-            var eh = d3.select(this);
-            // console.log(d3.select(eh[0][0]).selectAll("rect")[0][i]);
-            // console.log(d3.select(eh[0]));
-        });
+        .style("stroke", function(d, i) { return d3.rgb(z(i)).darker(); });
 
     var rect = gender.selectAll("rect")
         .data(Object)
