@@ -11,20 +11,6 @@ var inputDataDir = path.join(__dirname, '/data/input/');
 var analysisDir = path.join(__dirname, '/data/generated/');
 
 module.exports = {
-	getExistingFiles: function () {
-		var deferred = q.defer();
-		fs.readdir(inputDataDir, function (err, files) {
-			files.forEach(function(file) {
-				if (mime.lookup(file) == 'text/csv') {
-					var size = fs.statSync(inputDataDir + file).size;
-					deferred.resolve({ name: file, size: size });
-				}
-			});
-			deferred.reject();
-		});
-		return deferred.promise;
-	},
-
 	validate: function (file) {
 		var deferred = q.defer();
 		var cmd = 'Rscript scripts/validateInputFile.R data/input/' + file;

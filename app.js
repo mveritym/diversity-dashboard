@@ -13,6 +13,15 @@ app.get('/', function (req, res) {
 	res.sendFile(path.join(__dirname + '/views/index.html'));
 });
 
+app.post('/upload-file', function(req, res) {
+	data.upload(req)
+	.then(function() {
+		res.sendStatus(200);
+	}, function() {
+		res.sendStatus(500);
+	}).done();
+});
+
 app.get('/validate-file', function (req, res) {
 	var file = req.query.fileName;
 	data.validate(file)
@@ -20,6 +29,15 @@ app.get('/validate-file', function (req, res) {
 		res.status(200).send(isValid);
 	}, function() {
 		res.status(500);
+	}).done();
+});
+
+app.get('/analyze-data', function(req, res) {
+	data.analyze(req.query.fileName)
+	.then(function(outfile) {
+		res.status(200).send(outfile);
+	}, function() {
+		res.sendStatus(500);
 	}).done();
 });
 
@@ -45,24 +63,6 @@ app.get('/delete-analysis', function (req, res) {
 app.get('/load-file', function(req, res) {
 	var file = req.query.fileName;
 	res.sendFile(path.join(__dirname + '/' + file));
-});
-
-app.get('/analyze-data', function(req, res) {
-	data.analyze(req.query.fileName)
-	.then(function(outfile) {
-		res.status(200).send(outfile);
-	}, function() {
-		res.sendStatus(500);
-	}).done();
-});
-
-app.post('/upload-file', function(req, res) {
-	data.upload(req)
-	.then(function() {
-		res.sendStatus(200);
-	}, function() {
-		res.sendStatus(500);
-	}).done();
 });
 
 module.exports = app;

@@ -1,9 +1,10 @@
-var app     = require('../app');
-var Browser  = require('zombie');
+var supertest   = require('supertest');
+var app         = require('../app');
+var Browser     = require('zombie');
 
 describe('home page', function() {
     before(function(done) {
-        this.browser = new Browser({ site: "http://localhost:3000"});
+        this.browser = new Browser({ site: "http://localhost:9000"});
         this.browser.visit('/', done);
     });
 
@@ -24,9 +25,9 @@ describe('home page', function() {
         this.browser.assert.style('.spinner', 'display', 'none');
     });
 
-    it('should have a dropzone', function() {
+    it('should have a hidden dropzone', function() {
         this.browser.assert.element('#dropzone-container');
-        this.browser.assert.style('#dropzone-container', 'display', '');
+        this.browser.assert.style('#dropzone-container', 'display', 'none');
         this.browser.assert.element('#dropzone-error');
         this.browser.assert.text('#dropzone-error > span', '');
         this.browser.assert.element('#dropzone-container > .dropzone');
