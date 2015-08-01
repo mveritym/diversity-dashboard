@@ -50,11 +50,12 @@ module.exports = {
 
 	analyze: function (file) {
 		var deferred = q.defer();
-		var outfile = '/data/generated/gender_by_role.csv';
-		if (fs.existsSync(path.join(__dirname, outfile))) {
+		var outfile = 'gender_by_role.csv';
+		if (fs.existsSync(path.join(analysisDir, outfile))) {
 			deferred.resolve(outfile);
 		} else {
-			var cmd = 'Rscript scripts/getGenderByRole.R data/input/' + file;
+			var cmd = 'Rscript scripts/getGenderByRole.R ' + path.join('data/input/' + file);
+			console.log("running cmd " + cmd);
 			exec(cmd, function(error, stdout, stderr) {
 				var outfile = stdout;
 				if (error == null) {
