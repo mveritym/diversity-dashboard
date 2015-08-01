@@ -50,7 +50,7 @@ module.exports = {
 
 	analyze: function (file) {
 		var deferred = q.defer();
-		var outfile = 'data/generated/gender_by_role.csv';
+		var outfile = '/data/generated/gender_by_role.csv';
 		if (fs.existsSync(path.join(__dirname, outfile))) {
 			deferred.resolve(outfile);
 		} else {
