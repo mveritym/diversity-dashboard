@@ -54,8 +54,7 @@ module.exports = {
 		if (fs.existsSync(path.join(analysisDir, outfile))) {
 			deferred.resolve(outfile);
 		} else {
-			var cmd = 'Rscript scripts/getGenderByRole.R ' + path.join('data/input/' + file);
-			console.log("running cmd " + cmd);
+			var cmd = 'Rscript ' + path.join(__dirname, '/scripts/getGenderByRole.R') + ' ' + path.join(inputDataDir + file);
 			exec(cmd, function(error, stdout, stderr) {
 				var outfile = stdout;
 				if (error == null) {
