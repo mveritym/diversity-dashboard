@@ -16,16 +16,23 @@ var file_manager = function () {
             acceptedFiles: '.csv',
             clickable: true,
             init: function () {
-                this.on('error', remove_file);
-                this.on('success', on_dropzone_success);
-                get_existing_files();
+                this.on('error', on_file_upload_error);
+                this.on('success', on_file_upload_success);
             }
         });
     };
 
-    var on_dropzone_success= function(file) {
+    var on_file_upload_error = function (file, message) {
+        dropzone.removeFile(file);
+        if (message) {
+            errorBar.text(message).show();
+            errorBar.fadeOut(3000);
+        }
+    };
+
+    var on_file_upload_success= function(file) {
         validate_file(file, add_file, function(file, message) {
-            remove_file(file, message);
+            on_file_upload_error(file, message);
             delete_file(file);
         });
     };
@@ -37,18 +44,10 @@ var file_manager = function () {
         });
         $("button.upload-again").click(function() {
             viewController.expand_dropzone();
-            remove_file(file);
+            on_file_upload_error(file);
             delete_file(file);
             delete_analysis();
         });
-    };
-
-    var remove_file = function (file, message) {
-        dropzone.removeFile(file);
-        if (message) {
-            errorBar.text(message).show();
-            errorBar.fadeOut(3000);
-        }
     };
 
     var delete_file = function (file) {
@@ -72,18 +71,6 @@ var file_manager = function () {
         });
     }
 
-    var get_existing_files = function() {
-        $.ajax({
-            type: "GET",
-            url: "/get-existing-files",
-            success: function(result) {
-                if (result.length != 0) {
-                    validate_file(result, show_existing_file, delete_file);
-                }
-            }
-        });
-    };
-
     var validate_file = function (file, onValid, onInvalid) {
         $.ajax({
             type: "GET",
@@ -97,12 +84,6 @@ var file_manager = function () {
                 }
             }
         });
-    };
-
-    var show_existing_file = function (result) {
-        var existingFile = { name: result.name, size: result.size }
-        dropzone.options.addedfile.call(dropzone, existingFile);
-        add_file(existingFile);
     };
 
     var start_analysis = function (fileName) {

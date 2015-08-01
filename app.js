@@ -13,15 +13,6 @@ app.get('/', function (req, res) {
 	res.sendFile(path.join(__dirname + '/views/index.html'));
 });
 
-app.get('/get-existing-files', function (req, res) {
-	data.getExistingFiles()
-	.then(function(result) {
-		res.status(200).send(result);
-	}, function() {
-		res.status(200).send(null);
-	}).done();
-});
-
 app.get('/validate-file', function (req, res) {
 	var file = req.query.fileName;
 	data.validate(file)
