@@ -7,7 +7,7 @@ var path 	= require('path');
 var app = express();
 
 app.use(busboy());
-app.use(express.static('static', { etag: false }));
+app.use(express.static(__dirname + '/static'));
 
 app.get('/', function (req, res) {
 	res.sendFile(path.join(__dirname + '/views/index.html'));
