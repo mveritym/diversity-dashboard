@@ -1,7 +1,5 @@
 var exec 	= require('child_process').exec;
-var fork 	= require('child_process').fork;
 var fs 		= require('fs');
-var mime	= require('mime');
 var mkdirp	= require('mkdirp');
 var path 	= require('path');
 var q 		= require('q');
