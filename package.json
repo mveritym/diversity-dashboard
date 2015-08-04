@@ -15,14 +15,14 @@
     "http": "0.0.0",
     "jade": "~1.9.2",
     "mkdirp": "^0.5.1",
+    "mocha": "^2.2.5",
     "morgan": "~1.5.1",
     "q": "^1.4.1",
-    "serve-favicon": "~2.2.0",
     "rimraf": "^2.4.1",
+    "serve-favicon": "~2.2.0",
     "tmp": "0.0.26"
   },
   "devDependencies": {
-    "mocha": "^2.2.5",
     "zombie": "2.x.x"
   },
   "engine": "node 0.12.x"
