@@ -4,14 +4,40 @@ var mkdirp	= require('mkdirp');
 var path 	= require('path');
 var q 		= require('q');
 var rimraf	= require('rimraf');
+var tmp 	= require('tmp');
 
 var inputDataDir = path.join(__dirname, '/data/input/');
 var analysisDir = path.join(__dirname, '/data/generated/');
 
 module.exports = {
+	upload: function (req) {
+		var deferred = q.defer();
+
+		var uploaded_file_name;
+		tmp.tmpName({ postfix: '.csv', dir: inputDataDir }, function _tempNameGenerated(err, path) {
+		    if (err) deferred.reject();
+			uploaded_file_name = path;
+		});
+
+		mkdirp(inputDataDir, function(err) {
+			var fstream;
+			req.pipe(req.busboy);
+		    req.busboy.on('file', function (fieldname, file, filename) {
+		        fstream = fs.createWriteStream(uploaded_file_name);
+		        file.pipe(fstream);
+		        fstream.on('close', function () {
+					fstream.end();
+					deferred.resolve(uploaded_file_name);
+		        });
+		    });
+		});
+
+		return deferred.promise;
+	},
+
 	validate: function (file) {
 		var deferred = q.defer();
-		var cmd = 'Rscript scripts/validateInputFile.R data/input/' + file;
+		var cmd = 'Rscript scripts/validateInputFile.R ' + file;
 		exec(cmd, function(error, stdout, stderr) {
 			if (stderr == '') {
 				deferred.resolve(true);
@@ -22,9 +48,9 @@ module.exports = {
 		return deferred.promise;
 	},
 
-	deleteFile: function (file) {
+	deleteInputFile: function (file) {
 		var deferred = q.defer();
-		fs.unlink(path.join(inputDataDir, file), function(err) {
+		fs.unlink(file, function(err) {
 			if (err) {
 				deferred.reject("Failed to delete file " + file);
 			} else {
@@ -48,11 +74,11 @@ module.exports = {
 
 	analyze: function (file) {
 		var deferred = q.defer();
-		var outfile = 'gender_by_role.csv';
-		if (fs.existsSync(path.join(analysisDir, outfile))) {
+		var outfile = path.join(analysisDir, 'gender_by_role.csv');
+		if (fs.existsSync(outfile)) {
 			deferred.resolve(outfile);
 		} else {
-			var cmd = 'Rscript ' + path.join(__dirname, '/scripts/getGenderByRole.R') + ' ' + path.join(inputDataDir + file);
+			var cmd = 'Rscript ' + path.join(__dirname, '/scripts/getGenderByRole.R') + ' ' + file;
 			exec(cmd, function(error, stdout, stderr) {
 				var outfile = stdout;
 				if (error == null) {
@@ -62,22 +88,6 @@ module.exports = {
 				}
 			});
 		}
-		return deferred.promise;
-	},
-
-	upload: function (req) {
-		var deferred = q.defer();
-		mkdirp(inputDataDir, function(err) {
-			var fstream;
-			req.pipe(req.busboy);
-		    req.busboy.on('file', function (fieldname, file, filename) {
-		        fstream = fs.createWriteStream(inputDataDir + filename);
-		        file.pipe(fstream);
-		        fstream.on('close', function () {
-					deferred.resolve();
-		        });
-		    });
-		});
 		return deferred.promise;
 	}
 };

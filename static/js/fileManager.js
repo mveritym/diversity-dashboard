@@ -6,11 +6,7 @@ var file_manager = function () {
 
     var initialize_file_upload = function () {
         $.getScript("js/dropzone.js", function() {
-            upload_file(function (file) {
-                on_file_upload_success(file);
-            }, function (file, message) {
-                remove_file_from_dropzone_with_error(file, message);
-            });
+            upload_file(on_file_upload_success, remove_file_from_dropzone_with_error);
         });
     };
 
@@ -26,19 +22,24 @@ var file_manager = function () {
             acceptedFiles: '.csv',
             clickable: true,
             init: function () {
-                this.on('success', on_success);
-                this.on('error', on_error);
+                this.on('success', function(file, res) {
+                    on_success(file, res);
+                });
+                this.on('error', function(file, message) {
+                    on_error(file, message);
+                });
             }
         });
     };
 
-    var on_file_upload_success = function(file) {
+    var on_file_upload_success = function(file, file_name) {
+        console.log(file);
         try {
-            validate_file(file);
-            submit_or_upload_again(file);
+            validate_file(file_name);
+            submit_or_upload_again(file, file_name);
         } catch (error) {
             remove_file_from_dropzone_with_error(file, error.message);
-            delete_input_file(file);
+            delete_input_file(file_name);
         }
     };
 
@@ -50,11 +51,11 @@ var file_manager = function () {
         }
     };
 
-    var validate_file = function (file) {
+    var validate_file = function (file_name) {
         $.ajax({
             type: "GET",
             url: "/validate-file",
-            data: { fileName: file.name },
+            data: { fileName: file_name },
             success: function(isValid) {
                 if (isValid) {
                     return true;
@@ -68,31 +69,31 @@ var file_manager = function () {
         });
     };
 
-    var submit_or_upload_again = function(file) {
+    var submit_or_upload_again = function(file, file_name) {
         viewController.shrink_dropzone();
 
-        $("button.success").click(function() {
+        $("button.success").off('click').on('click', function() {
             viewController.hide_all();
             viewController.show_spinner();
-            analyze_data(file);
+            analyze_data(file_name);
         });
 
-        $("button.upload-again").click(function() {
+        $("button.upload-again").off('click').on('click', function() {
             viewController.expand_dropzone();
-            remove_file_from_dropzone_with_error(file);
-            delete_input_file(file);
+            remove_file_from_dropzone_with_error(file, '');
+            delete_input_file(file_name);
         });
     };
 
-    var analyze_data = function (file) {
+    var analyze_data = function (file_name) {
         $.ajax({
             type: "GET",
             url: "/analyze-data",
-            data: { fileName: file.name },
+            data: { fileName: file_name },
             success: function(result) {
                 var matchedName = result.match("\"(.+)\""); // if file name was printed by R script, need to extract file name
                 var analysisFileName = matchedName ? matchedName[1] : result;
-                delete_input_file(file);
+                delete_input_file(file_name);
                 load_data(analysisFileName);
             }
         });
@@ -112,11 +113,11 @@ var file_manager = function () {
         });
     };
 
-    var delete_input_file = function (file) {
+    var delete_input_file = function (file_name) {
         $.ajax({
             type: "GET",
-            url: "/delete-file",
-            data: { fileName: file.name },
+            url: "/delete-input-file",
+            data: { fileName: file_name },
             error: function (err) {
                 console.log(err);
             }

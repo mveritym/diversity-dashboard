@@ -19,7 +19,8 @@ gender_by_role <- summarise(group_by(consultants, Role),
                             num_women = as.character(sum(Gender == "Female")))
 gender_by_role <- mutate(gender_by_role, Technical = as.character(Role %in% tech_roles))
 
-outfile <- paste(subdir, "gender_by_role.csv", sep="/")
+setwd(generated_dir)
+outfile <- "gender_by_role.csv"
 write.table(gender_by_role, file=outfile, row.names=FALSE)
 
 print(outfile)

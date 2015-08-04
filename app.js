@@ -1,7 +1,7 @@
 var busboy 	= require('connect-busboy');
 var data 	= require('./data');
-var http	= require('http');
 var express = require('express');
+var http	= require('http');
 var path 	= require('path');
 
 var app = express();
@@ -15,8 +15,8 @@ app.get('/', function (req, res) {
 
 app.post('/upload-file', function(req, res) {
 	data.upload(req)
-	.then(function() {
-		res.sendStatus(200);
+	.then(function(file_name) {
+		res.status(200).send(file_name);
 	}, function() {
 		res.sendStatus(500);
 	}).done();
@@ -41,9 +41,9 @@ app.get('/analyze-data', function(req, res) {
 	}).done();
 });
 
-app.get('/delete-file', function (req, res) {
+app.get('/delete-input-file', function (req, res) {
 	var file = req.query.fileName;
-	data.deleteFile(file)
+	data.deleteInputFile(file)
 	.then(function() {
 		res.sendStatus(200);
 	}, function(err) {
