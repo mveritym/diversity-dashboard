@@ -74,20 +74,17 @@ module.exports = {
 
 	analyze: function (file) {
 		var deferred = q.defer();
-		var outfile = path.join(analysisDir, 'gender_by_role.csv');
-		if (fs.existsSync(outfile)) {
-			deferred.resolve(outfile);
-		} else {
-			var cmd = 'Rscript ' + path.join(__dirname, '/scripts/getGenderByRole.R') + ' ' + file;
+		var outfile = path.join('data/generated', 'gender_by_role.csv');
+		mkdirp(analysisDir, function(err) {
+			var cmd = 'Rscript ' + path.join(__dirname, '/scripts/getGenderByRole.R') + ' ' + file + ' ' + outfile;
 			exec(cmd, function(error, stdout, stderr) {
-				var outfile = stdout;
 				if (error == null) {
 					deferred.resolve(outfile);
 				} else {
 					deferred.reject();
 				}
 			});
-		}
+		});
 		return deferred.promise;
 	}
 };
