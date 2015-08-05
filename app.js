@@ -62,7 +62,7 @@ app.get('/delete-analysis', function (req, res) {
 
 app.get('/load-file', function(req, res) {
 	var file = req.query.fileName;
-	res.sendFile(path.join(__dirname, '/data/generated/', file));
+	res.sendFile(file);
 });
 
 module.exports = app;

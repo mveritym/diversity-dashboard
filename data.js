@@ -74,13 +74,14 @@ module.exports = {
 
 	analyze: function (file) {
 		var deferred = q.defer();
-		var outfile = path.join('data/generated', 'gender_by_role.csv');
+		var outfile = path.join(analysisDir, 'gender_by_role.csv');
 		mkdirp(analysisDir, function(err) {
 			var cmd = 'Rscript ' + path.join(__dirname, '/scripts/getGenderByRole.R') + ' ' + file + ' ' + outfile;
 			exec(cmd, function(error, stdout, stderr) {
 				if (error == null) {
 					deferred.resolve(outfile);
 				} else {
+					console.log("R ERROR: " + error);
 					deferred.reject();
 				}
 			});
