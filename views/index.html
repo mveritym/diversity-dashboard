@@ -17,33 +17,26 @@
     <body>
         <div class="container">
             <div class="masthead">
-                <h3 class="text-muted">Diversity Dashboard</h3>
+                <div class="nav">
+                    <a>Help</a>
+                    <a href="https://github.com/mveritym/diversity-dashboard">Contribute</a>
+                </div>
+                <h3>Diversity Dashboard</h3>
             </div>
             <div class="jumbotron">
-                <div id="submit-buttons">
-                    <button class="btn success">Submit</button><br>
-                    <button class="btn upload-again">Upload Again</button>
-                </div>
-                <div id="dropzone-container">
-                    <div id="dropzone-error" class="error"><span></span></div>
-                    <div class="dropzone"></div>
-                </div>
-                <div class="spinner">
-                  <div class="rect1"></div>
-                  <div class="rect2"></div>
-                  <div class="rect3"></div>
-                  <div class="rect4"></div>
-                  <div class="rect5"></div>
-                </div>
-                <div id="chart-container">
-                    <svg class="chart"></svg>
-                </div>
+                <div id="dashboard"></div>
             </div>
         </div>
     </body>
 
-    <script type="text/javascript" src="js/viewController.js"></script>
-    <script type="text/javascript" src="js/fileManager.js"></script>
-    <script type="text/javascript" src="js/visualize.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#dashboard").load("partials/dashboard.html", function() {
+                $.getScript("js/viewController.js");
+                $.getScript("js/fileManager.js");
+                $.getScript("js/visualize.js");
+            });
+        });
+    </script>
 
 </html>

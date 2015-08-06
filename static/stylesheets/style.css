@@ -1,6 +1,18 @@
 /*Page Template Styling*/
 
-h3.text-muted { color: #6600CC; }
+
+.masthead { color: #5100a3; }
+
+.masthead .nav {
+    float: right;
+    margin: 5px 10px 0 10px;
+}
+
+.masthead .nav a {
+    color: #6600cc;
+    font-size: 18px;
+    margin: 0 10px 0 10px;
+}
 
 /*Chart Styling*/
 
