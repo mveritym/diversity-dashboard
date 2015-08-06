@@ -1,4 +1,4 @@
-# [diversity-dashboard](http://192.241.196.139:3000/)
+# [diversity-dashboard](http://diversitydashboard.melissavmarshall.com/)
 
 [![Build Status](https://snap-ci.com/mveritym/diversity-dashboard/branch/master/build_image)](https://snap-ci.com/mveritym/diversity-dashboard/branch/master)
 
