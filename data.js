@@ -72,20 +72,28 @@ module.exports = {
 		return deferred.promise;
 	},
 
-	analyze: function (file) {
+	analyze: function (infile) {
 		var deferred = q.defer();
-		var outfile = path.join(analysisDir, 'gender_by_role.csv');
-		mkdirp(analysisDir, function(err) {
-			var cmd = 'Rscript ' + path.join(__dirname, '/scripts/getGenderByRole.R') + ' ' + file + ' ' + outfile;
-			exec(cmd, function(error, stdout, stderr) {
-				if (error == null) {
+		var scriptPath = path.join(__dirname, '/scripts/getGenderByRole.R');
+
+		tmp.tmpName({ postfix: '.csv', dir: analysisDir }, function _tempNameGenerated(err, path) {
+		    if (err) deferred.reject();
+			var outfile = path;
+
+			mkdirp(analysisDir, function(err) {
+				if (err) deferred.reject();
+
+				var cmd = ['Rscript ', scriptPath, infile, outfile].join(' ');
+				exec(cmd, function(error, stdout, stderr) {
+					if (error) {
+						console.log("R ERROR: " + error);
+						deferred.reject();
+					}
 					deferred.resolve(outfile);
-				} else {
-					console.log("R ERROR: " + error);
-					deferred.reject();
-				}
+				});
 			});
 		});
+
 		return deferred.promise;
 	}
 };
