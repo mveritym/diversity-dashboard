@@ -33,7 +33,6 @@ var file_manager = function () {
     };
 
     var on_file_upload_success = function(file, file_name) {
-        console.log(file);
         try {
             validate_file(file_name);
             submit_or_upload_again(file, file_name);
