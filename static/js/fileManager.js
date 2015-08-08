@@ -51,14 +51,12 @@ var file_manager = function () {
             url: "/validate-file",
             data: { fileName: file_name },
             success: function(isValid) {
-                if (isValid) {
-                    return true;
-                } else {
-                    throw { name: 'ValidInputError', message: 'Input file has missing headers' }
+                if (!isValid) {
+                    throw new Error('Input file has missing headers');
                 }
             },
             error: function() {
-                throw { name: 'ValidInputError', message: 'Something went wrong during file validation :(' }
+                throw new Error('Something went wrong during file validation :(');
             }
         });
     };

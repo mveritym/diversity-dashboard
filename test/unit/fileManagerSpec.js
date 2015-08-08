@@ -28,6 +28,7 @@ describe('File Manager', function() {
     });
 
     describe('on file upload success', function() {
+
       it('should validate file and prompt for submit when file uploads', function() {
         var file_name = "file.csv";
         var file = {};
@@ -75,4 +76,33 @@ describe('File Manager', function() {
       });
     });
 
+    describe('validate file', function() {
+
+      var file_name = "file.csv";
+
+      it('should validate the file', function() {
+        spyOn($, 'ajax');
+        fileManager.validate_file(file_name);
+        var args = $.ajax.calls.mostRecent().args[0];
+
+        expect(args["type"]).toBe("GET");
+        expect(args["url"]).toBe("/validate-file");
+        expect(args["data"].fileName).toBe(file_name);
+      });
+
+      it('should not throw an error if the file is valid', function() {
+        spyOn($, 'ajax').and.callFake(function(options) { options.success(true); });
+        expect(fileManager.validate_file).not.toThrow();
+      });
+
+      it('should throw an error if the file is not valid', function() {
+        spyOn($, 'ajax').and.callFake(function(options) { options.success(false); });
+        expect(fileManager.validate_file).toThrow(new Error('Input file has missing headers'));
+      });
+
+      it('should throw an error if an error occurs during validation', function() {
+        spyOn($, 'ajax').and.callFake(function(options) { options.error(); });
+        expect(fileManager.validate_file).toThrow(new Error('Something went wrong during file validation :('));
+      });
+    });
 });
