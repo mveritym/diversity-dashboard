@@ -2,6 +2,10 @@ describe('File Manager', function() {
 
     var fileManager = file_manager();
     var viewController = fileManager.viewController;
+    var visualizer = fileManager.visualize;
+
+    var file = { contents: 'file contents' };
+    var file_name = "file.csv";
 
     it('should load dropzone.js', function() {
       spyOn($, 'getScript').and.callThrough();
@@ -30,8 +34,6 @@ describe('File Manager', function() {
     describe('on file upload success', function() {
 
       it('should validate file and prompt for submit when file uploads', function() {
-        var file_name = "file.csv";
-        var file = {};
         spyOn(fileManager, 'validate_file');
         spyOn(fileManager, 'submit_or_upload_again');
 
@@ -42,8 +44,6 @@ describe('File Manager', function() {
       });
 
       it('should remove file from dropzone and delete the input file when file validation fails', function() {
-        var file_name = "file.csv";
-        var file = {};
         var errorMsg = "file validation failed";
 
         spyOn(fileManager, 'validate_file').and.callFake(function() { throw { message: errorMsg} });
@@ -58,8 +58,6 @@ describe('File Manager', function() {
     });
 
     describe('remove dropzone file', function() {
-
-      var file = { content: 'file contents' };
 
       it('should remove the file from the dropzone and show an error', function() {
         fileManager.dropzone = { removeFile: function() {} };
@@ -77,8 +75,6 @@ describe('File Manager', function() {
     });
 
     describe('validate file', function() {
-
-      var file_name = "file.csv";
 
       it('should validate the file', function() {
         spyOn($, 'ajax');
@@ -105,4 +101,113 @@ describe('File Manager', function() {
         expect(fileManager.validate_file).toThrow(new Error('Something went wrong during file validation :('));
       });
     });
+
+    it('should prompt to submit the file or upload again', function() {
+      spyOn(viewController, 'shrink_dropzone');
+      spyOn(viewController, 'set_onclick_handler');
+
+      fileManager.submit_or_upload_again(file, file_name);
+
+      expect(viewController.shrink_dropzone).toHaveBeenCalled();
+      expect(viewController.set_onclick_handler).toHaveBeenCalledWith('button.success', fileManager.on_file_submit, file_name);
+      expect(viewController.set_onclick_handler).toHaveBeenCalledWith('button.upload-again', fileManager.on_upload_again, file_name, file);
+    });
+
+    it('should show a spinner and start analyzing the file', function() {
+      spyOn(viewController, 'hide_all');
+      spyOn(viewController, 'show_spinner');
+      spyOn(fileManager, 'analyze_data');
+
+      fileManager.on_file_submit(file_name);
+
+      expect(viewController.hide_all).toHaveBeenCalled();
+      expect(viewController.show_spinner).toHaveBeenCalled();
+      expect(fileManager.analyze_data).toHaveBeenCalledWith(file_name);
+    });
+
+    it('should remove the file and expand the dropzone', function() {
+      spyOn(viewController, 'expand_dropzone');
+      spyOn(fileManager, 'remove_file_from_dropzone_with_error');
+      spyOn(fileManager, 'delete_input_file');
+
+      fileManager.on_upload_again(file, file_name);
+
+      expect(viewController.expand_dropzone).toHaveBeenCalled();
+      expect(fileManager.remove_file_from_dropzone_with_error).toHaveBeenCalledWith(file);
+      expect(fileManager.delete_input_file).toHaveBeenCalledWith(file_name);
+    });
+
+    describe('analyze data', function() {
+      it('should make an ajax call to analyze the data', function() {
+        spyOn($, 'ajax');
+        fileManager.analyze_data(file_name);
+        var args = $.ajax.calls.mostRecent().args[0];
+
+        expect(args["type"]).toBe("GET");
+        expect(args["url"]).toBe("/analyze-data");
+        expect(args["data"].fileName).toBe(file_name);
+      });
+
+      it('should delete the input file and load the data on success', function() {
+        var outputfile = '\"outputfile.csv\"';
+        var strippedOutputFile = 'outputfile.csv';
+        spyOn($, 'ajax').and.callFake(function(options) { options.success(outputfile); });
+        spyOn(fileManager, 'delete_input_file');
+        spyOn(fileManager, 'load_data');
+
+        fileManager.analyze_data(file_name);
+
+        expect(fileManager.delete_input_file).toHaveBeenCalledWith(file_name);
+        expect(fileManager.load_data).toHaveBeenCalledWith(strippedOutputFile);
+      });
+    });
+
+    describe('load data', function() {
+      it('should make an ajax call to load the data', function() {
+        spyOn($, 'ajax');
+        fileManager.load_data(file_name);
+        var args = $.ajax.calls.mostRecent().args[0];
+
+        expect(args["type"]).toBe("GET");
+        expect(args["url"]).toBe("/load-file");
+        expect(args["data"].fileName).toBe(file_name);
+      });
+
+      it('should delete the analysis file and visualize the data on success', function() {
+        var data = {};
+        spyOn($, 'ajax').and.callFake(function(options) { options.success(data); });
+
+        spyOn(viewController, 'hide_spinner');
+        spyOn(viewController, 'show_chart');
+        spyOn(fileManager, 'delete_analysis_file');
+        spyOn(visualizer, 'visualize');
+
+        fileManager.load_data(file_name);
+
+        expect(viewController.hide_spinner).toHaveBeenCalled();
+        expect(viewController.show_chart).toHaveBeenCalled();
+        expect(fileManager.delete_analysis_file).toHaveBeenCalled();
+        expect(visualizer.visualize).toHaveBeenCalledWith(data);
+      });
+    });
+
+    it('should make an ajax call to delete the input file', function() {
+      spyOn($, 'ajax');
+      fileManager.delete_input_file(file_name);
+      var args = $.ajax.calls.mostRecent().args[0];
+
+      expect(args["type"]).toBe("GET");
+      expect(args["url"]).toBe("/delete-input-file");
+      expect(args["data"].fileName).toBe(file_name);
+    });
+
+    it('should make an ajax call to delete the analysis file', function() {
+      spyOn($, 'ajax');
+      fileManager.delete_analysis_file();
+      var args = $.ajax.calls.mostRecent().args[0];
+
+      expect(args["type"]).toBe("GET");
+      expect(args["url"]).toBe("/delete-analysis");
+    });
+
 });

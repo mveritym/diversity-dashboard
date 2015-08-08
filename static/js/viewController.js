@@ -69,6 +69,16 @@ var view_controller = function () {
         errorMessage.hide();
     };
 
+    var set_onclick_handler = function (elem, clickCallback, file_name, file) {
+      $(elem).off('click').on('click', function() {
+        if (file) {
+          clickCallback(file_name, file);
+        } else {
+          clickCallback(file_name);
+        }
+      });
+    };
+
     var hide_all = function () {
         hide_dropzone();
         hide_submit_buttons();
@@ -85,7 +95,8 @@ var view_controller = function () {
         shrink_dropzone: shrink_dropzone,
         expand_dropzone: expand_dropzone,
         show_error_message: show_error_message,
-        hide_error_message: hide_error_message
+        hide_error_message: hide_error_message,
+        set_onclick_handler: set_onclick_handler
     };
 };
 

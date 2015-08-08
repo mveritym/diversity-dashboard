@@ -1,30 +1,30 @@
 var visualizer = function () {
 
-    var csv_file_name;
-
-    var margin = {top: 50, right: 30, bottom: 40, left: 40},
-        axisWidth = 40,
-        maxWidth = 1020,
-        maxHeight = 500,
-        textBufferWidth = 5;
-
-    var x = d3.scale.ordinal().rangeRoundBands([0, maxWidth]),
-        y = d3.scale.linear().range([0, maxHeight]),
-        z = d3.scale.ordinal().range(["lightsteelblue", "thistle"]);
-
-    var yAxis = d3.svg.axis()
-        .scale(y)
-        .orient("left")
-
-    var chart = d3.select(".chart")
-        .attr("width", maxWidth)
-        .attr("height", maxHeight + margin.bottom + margin.top)
-
     function analyze_data(file) {
         csv_file_name = file_manager().analyze_data(file.name);
     }
 
     function visualize (csv_contents) {
+
+        var csv_file_name;
+
+        var margin = {top: 50, right: 30, bottom: 40, left: 40},
+            axisWidth = 40,
+            maxWidth = 1020,
+            maxHeight = 500,
+            textBufferWidth = 5;
+
+        var x = d3.scale.ordinal().rangeRoundBands([0, maxWidth]),
+            y = d3.scale.linear().range([0, maxHeight]),
+            z = d3.scale.ordinal().range(["lightsteelblue", "thistle"]);
+
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+
+        var chart = d3.select(".chart")
+            .attr("width", maxWidth)
+            .attr("height", maxHeight + margin.bottom + margin.top)
 
         var data = d3.csv.parse(csv_contents, function(d) {
             return {
@@ -104,4 +104,4 @@ var visualizer = function () {
         analyze_data: analyze_data,
         visualize: visualize
     };
-}
+};
