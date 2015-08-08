@@ -56,4 +56,23 @@ describe('File Manager', function() {
       });
     });
 
+    describe('remove dropzone file', function() {
+
+      var file = { content: 'file contents' };
+
+      it('should remove the file from the dropzone and show an error', function() {
+        fileManager.dropzone = { removeFile: function() {} };
+        spyOn(fileManager.dropzone, 'removeFile');
+        fileManager.remove_file_from_dropzone_with_error(file);
+        expect(fileManager.dropzone.removeFile).toHaveBeenCalledWith(file);
+      });
+
+      it('should display an error message', function() {
+        var message = "error message";
+        spyOn(viewController, 'show_error_message');
+        fileManager.remove_file_from_dropzone_with_error(file, message);
+        expect(viewController.show_error_message).toHaveBeenCalledWith(message);
+      });
+    });
+
 });

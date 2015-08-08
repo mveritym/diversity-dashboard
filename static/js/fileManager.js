@@ -41,11 +41,8 @@ var file_manager = function () {
     };
 
     var remove_file_from_dropzone_with_error = function (file, message) {
-        dropzone.removeFile(file);
-        if (message) {
-            errorBar.text(message).show();
-            errorBar.fadeOut(3000);
-        }
+        this.dropzone.removeFile(file);
+        if (message) viewController.show_error_message(message);
     };
 
     var validate_file = function (file_name) {
@@ -77,7 +74,7 @@ var file_manager = function () {
 
         $("button.upload-again").off('click').on('click', function() {
             viewController.expand_dropzone();
-            remove_file_from_dropzone_with_error(file, '');
+            remove_file_from_dropzone_with_error(file);
             delete_input_file(file_name);
         });
     };

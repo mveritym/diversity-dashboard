@@ -60,6 +60,11 @@ var view_controller = function () {
         submitButtons.hide();
     };
 
+    var show_error_message = function (message) {
+      errorMessage.text(message).show();
+      errorMessage.fadeOut(3000);
+    };
+
     var hide_error_message = function () {
         errorMessage.hide();
     };
@@ -79,6 +84,7 @@ var view_controller = function () {
         show_chart: show_chart,
         shrink_dropzone: shrink_dropzone,
         expand_dropzone: expand_dropzone,
+        show_error_message: show_error_message,
         hide_error_message: hide_error_message
     };
 };
