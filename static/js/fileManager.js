@@ -11,9 +11,7 @@ var file_manager = function () {
     };
 
     var upload_file = function (on_success, on_error) {
-        errorBar = $("#dropzone-error span");
-        errorBar.hide();
-
+        viewController.hide_error_message();
         window.Dropzone;
         Dropzone.autoDiscover = false;
         dropzone = new Dropzone(".dropzone", {
@@ -34,11 +32,11 @@ var file_manager = function () {
 
     var on_file_upload_success = function(file, file_name) {
         try {
-            validate_file(file_name);
-            submit_or_upload_again(file, file_name);
+            this.validate_file(file_name);
+            this.submit_or_upload_again(file, file_name);
         } catch (error) {
-            remove_file_from_dropzone_with_error(file, error.message);
-            delete_input_file(file_name);
+            this.remove_file_from_dropzone_with_error(file, error.message);
+            this.delete_input_file(file_name);
         }
     };
 
@@ -134,7 +132,14 @@ var file_manager = function () {
     }
 
     return {
-        initialize_file_upload: initialize_file_upload
+        viewController: viewController,
+        initialize_file_upload: initialize_file_upload,
+        upload_file: upload_file,
+        on_file_upload_success: on_file_upload_success,
+        validate_file: validate_file,
+        submit_or_upload_again: submit_or_upload_again,
+        remove_file_from_dropzone_with_error: remove_file_from_dropzone_with_error,
+        delete_input_file: delete_input_file
     }
 };
 

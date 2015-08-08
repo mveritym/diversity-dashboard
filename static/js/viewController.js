@@ -6,6 +6,7 @@ var view_controller = function () {
     var submitButtons = $("#submit-buttons");
     var spinner = $(".spinner");
     var chart = $("#chart-container");
+    var errorMessage = $("#dropzone-error span");
 
     var show_dropzone = function () {
         dropzone.show();
@@ -59,6 +60,10 @@ var view_controller = function () {
         submitButtons.hide();
     };
 
+    var hide_error_message = function () {
+        errorMessage.hide();
+    };
+
     var hide_all = function () {
         hide_dropzone();
         hide_submit_buttons();
@@ -73,7 +78,8 @@ var view_controller = function () {
         hide_spinner: hide_spinner,
         show_chart: show_chart,
         shrink_dropzone: shrink_dropzone,
-        expand_dropzone: expand_dropzone
+        expand_dropzone: expand_dropzone,
+        hide_error_message: hide_error_message
     };
 };
 

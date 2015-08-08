@@ -17,10 +17,11 @@ module.exports = function(config) {
     files: [
       // dependencies
       'static/js/jquery.min.js',
+      'node_modules/jasmine-jquery/jasmine-jquery.js',
 
       // code under test
       'static/js/*.js',
-      
+
       // test files
       'test/unit/*.js'
     ],
@@ -57,7 +58,7 @@ module.exports = function(config) {
 
 
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: false,
+    autoWatch: true,
 
 
     // start these browsers

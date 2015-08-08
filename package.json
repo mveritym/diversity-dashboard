@@ -24,6 +24,7 @@
     "tmp": "0.0.26"
   },
   "devDependencies": {
+    "jasmine-jquery": "^2.1.0",
     "karma-chrome-launcher": "^0.2.0",
     "karma-jasmine": "^0.3.6",
     "karma-phantomjs-launcher": "^0.2.1",
