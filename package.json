@@ -26,6 +26,7 @@
   "devDependencies": {
     "karma-chrome-launcher": "^0.2.0",
     "karma-jasmine": "^0.3.6",
+    "karma-phantomjs-launcher": "^0.2.1",
     "zombie": "2.x.x"
   },
   "engine": "node 0.12.x"
