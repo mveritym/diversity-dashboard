@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "./node_modules/.bin/mocha --reporter spec"
+    "test": "karma start karma.conf.js"
   },
   "dependencies": {
     "body-parser": "~1.12.0",
@@ -23,6 +23,7 @@
     "tmp": "0.0.26"
   },
   "devDependencies": {
+    "karma-chrome-launcher": "^0.2.0",
     "zombie": "2.x.x"
   },
   "engine": "node 0.12.x"
