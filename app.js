@@ -35,7 +35,10 @@ app.get('/validate-file', function (req, res) {
 app.get('/analyze-data', function(req, res) {
 	data.analyze(req.query.fileName)
 	.then(function(outfile) {
-		res.status(200).send(outfile);
+		res.status(200).sendFile(outfile, function() {
+			data.deleteFile(req.query.fileName);
+			data.deleteFile(outfile).done();
+		});
 	}, function() {
 		res.sendStatus(500);
 	}).done();
@@ -43,7 +46,7 @@ app.get('/analyze-data', function(req, res) {
 
 app.get('/delete-input-file', function (req, res) {
 	var file = req.query.fileName;
-	data.deleteInputFile(file)
+	data.deleteFile(file)
 	.then(function() {
 		res.sendStatus(200);
 	}, function(err) {

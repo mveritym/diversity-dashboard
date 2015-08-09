@@ -48,7 +48,7 @@ module.exports = {
 		return deferred.promise;
 	},
 
-	deleteInputFile: function (file) {
+	deleteFile: function(file) {
 		var deferred = q.defer();
 		fs.unlink(file, function(err) {
 			if (err) {
@@ -77,7 +77,7 @@ module.exports = {
 		var scriptPath = path.join(__dirname, '/scripts/getGenderByRole.R');
 
 		tmp.tmpName({ postfix: '.csv', dir: analysisDir }, function _tempNameGenerated(err, path) {
-		    if (err) deferred.reject();
+		  if (err) deferred.reject();
 			var outfile = path;
 
 			mkdirp(analysisDir, function(err) {

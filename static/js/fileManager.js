@@ -38,7 +38,7 @@ var FileManager = function () {
       fm.submit_or_upload_again(file, file_name);
     } catch (error) {
       fm.remove_file_from_dropzone_with_error(file, error.message);
-      fm.delete_input_file(file_name);
+      fm.delete_file(file_name);
     }
   };
 
@@ -78,7 +78,7 @@ var FileManager = function () {
   this.on_upload_again = function (file_name, file) {
     fm.viewController.expand_dropzone();
     fm.remove_file_from_dropzone_with_error(file);
-    fm.delete_input_file(file_name);
+    fm.delete_file(file_name);
   };
 
   this.analyze_data = function (file_name) {
@@ -86,31 +86,15 @@ var FileManager = function () {
       type: "GET",
       url: "/analyze-data",
       data: { fileName: file_name },
-      success: function(result) {
-        console.log(result);
-        var matchedName = result.match("\"(.+)\""); // if file name was printed by R script, need to extract file name
-        var analysisFileName = matchedName ? matchedName[1] : result;
-        fm.delete_input_file(file_name);
-        fm.load_data(analysisFileName);
-      }
-    });
-  };
-
-  this.load_data = function (fileName) {
-    $.ajax({
-      type: "GET",
-      url: "/load-file",
-      data: { fileName: fileName },
       success: function(data) {
         fm.viewController.hide_spinner();
         fm.viewController.show_chart();
-        fm.delete_input_file(fileName);
         fm.visualize.visualize(data);
       }
     });
   };
 
-  this.delete_input_file = function (file_name) {
+  this.delete_file = function (file_name) {
     $.ajax({
       type: "GET",
       url: "/delete-input-file",
