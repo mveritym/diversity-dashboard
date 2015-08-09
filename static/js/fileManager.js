@@ -1,20 +1,22 @@
-var file_manager = function () {
+var FileManager = function () {
 
-  var dropzone;
-  var viewController = view_controller();
-  var visualize = visualizer();
+  this.dropzone;
+  this.viewController = view_controller();
+  this.visualize = visualizer();
 
-  var initialize_file_upload = function () {
+  var fm = this;
+
+  this.initialize_file_upload = function () {
     $.getScript("js/dropzone.js", function() {
-      upload_file(on_file_upload_success, remove_file_from_dropzone_with_error);
+      fm.upload_file(fm.on_file_upload_success, fm.remove_file_from_dropzone_with_error);
     });
   };
 
-  var upload_file = function (on_success, on_error) {
-    viewController.hide_error_message();
+  this.upload_file = function (on_success, on_error) {
+    fm.viewController.hide_error_message();
     window.Dropzone;
     Dropzone.autoDiscover = false;
-    dropzone = new Dropzone(".dropzone", {
+    fm.dropzone = new Dropzone(".dropzone", {
       url: "/upload-file",
       maxFiles: 1,
       acceptedFiles: '.csv',
@@ -30,22 +32,22 @@ var file_manager = function () {
     });
   };
 
-  var on_file_upload_success = function(file, file_name) {
+  this.on_file_upload_success = function(file, file_name) {
     try {
-      this.validate_file(file_name);
-      this.submit_or_upload_again(file, file_name);
+      fm.validate_file(file_name);
+      fm.submit_or_upload_again(file, file_name);
     } catch (error) {
-      this.remove_file_from_dropzone_with_error(file, error.message);
-      this.delete_input_file(file_name);
+      fm.remove_file_from_dropzone_with_error(file, error.message);
+      fm.delete_input_file(file_name);
     }
   };
 
-  var remove_file_from_dropzone_with_error = function (file, message) {
-    this.dropzone.removeFile(file);
-    if (message) viewController.show_error_message(message);
+  this.remove_file_from_dropzone_with_error = function (file, message) {
+    fm.dropzone.removeFile(file);
+    if (message) fm.viewController.show_error_message(message);
   };
 
-  var validate_file = function (file_name) {
+  this.validate_file = function (file_name) {
     $.ajax({
       type: "GET",
       url: "/validate-file",
@@ -61,88 +63,64 @@ var file_manager = function () {
     });
   };
 
-  var submit_or_upload_again = function(file, file_name) {
-    viewController.shrink_dropzone();
-    viewController.set_onclick_handler('button.success', on_file_submit, file_name);
-    viewController.set_onclick_handler('button.upload-again', on_upload_again, file_name, file);
+  this.submit_or_upload_again = function(file, file_name) {
+    fm.viewController.shrink_dropzone();
+    fm.viewController.set_onclick_handler('button.success', fm.on_file_submit, file_name);
+    fm.viewController.set_onclick_handler('button.upload-again', fm.on_upload_again, file_name, file);
   };
 
-  var on_file_submit = function (file_name) {
-    viewController.hide_all();
-    viewController.show_spinner();
-    this.analyze_data(file_name);
+  this.on_file_submit = function (file_name) {
+    fm.viewController.hide_all();
+    fm.viewController.show_spinner();
+    fm.analyze_data(file_name);
   };
 
-  var on_upload_again = function (file, file_name) {
-    viewController.expand_dropzone();
-    this.remove_file_from_dropzone_with_error(file);
-    this.delete_input_file(file_name);
+  this.on_upload_again = function (file_name, file) {
+    fm.viewController.expand_dropzone();
+    fm.remove_file_from_dropzone_with_error(file);
+    fm.delete_input_file(file_name);
   };
 
-  var analyze_data = function (file_name) {
-    var fileManager = this;
+  this.analyze_data = function (file_name) {
     $.ajax({
       type: "GET",
       url: "/analyze-data",
       data: { fileName: file_name },
       success: function(result) {
+        console.log(result);
         var matchedName = result.match("\"(.+)\""); // if file name was printed by R script, need to extract file name
         var analysisFileName = matchedName ? matchedName[1] : result;
-        fileManager.delete_input_file(file_name);
-        fileManager.load_data(analysisFileName);
+        fm.delete_input_file(file_name);
+        fm.load_data(analysisFileName);
       }
     });
   };
 
-  var load_data = function (fileName) {
-    var fileManager = this;
+  this.load_data = function (fileName) {
     $.ajax({
       type: "GET",
       url: "/load-file",
       data: { fileName: fileName },
       success: function(data) {
-        viewController.hide_spinner();
-        viewController.show_chart();
-        fileManager.delete_analysis_file();
-        visualize.visualize(data);
+        fm.viewController.hide_spinner();
+        fm.viewController.show_chart();
+        fm.delete_input_file(fileName);
+        fm.visualize.visualize(data);
       }
     });
   };
 
-  var delete_input_file = function (file_name) {
+  this.delete_input_file = function (file_name) {
     $.ajax({
       type: "GET",
       url: "/delete-input-file",
       data: { fileName: file_name }
     });
   };
-
-  var delete_analysis_file = function () {
-    $.ajax({
-      type: "GET",
-      url: "/delete-analysis"
-    });
-  }
-
-  return {
-    viewController:                       viewController,
-    visualize:                            visualize,
-    initialize_file_upload:               initialize_file_upload,
-    upload_file:                          upload_file,
-    on_file_upload_success:               on_file_upload_success,
-    validate_file:                        validate_file,
-    submit_or_upload_again:               submit_or_upload_again,
-    remove_file_from_dropzone_with_error: remove_file_from_dropzone_with_error,
-    delete_input_file:                    delete_input_file,
-    on_file_submit:                       on_file_submit,
-    on_upload_again:                      on_upload_again,
-    analyze_data:                         analyze_data,
-    load_data:                            load_data,
-    delete_analysis_file:                 delete_analysis_file
-  }
 };
 
 $(document).ready(function () {
   // if analysis exists in localstorage, use that. Else:
-  file_manager().initialize_file_upload();
+  var fileManager = new FileManager();
+  fileManager.initialize_file_upload();
 });

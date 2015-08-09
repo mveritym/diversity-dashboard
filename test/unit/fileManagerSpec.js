@@ -1,6 +1,6 @@
 describe('File Manager', function() {
 
-    var fileManager = file_manager();
+    var fileManager = new FileManager();
     var viewController = fileManager.viewController;
     var visualizer = fileManager.visualize;
 
@@ -130,7 +130,7 @@ describe('File Manager', function() {
       spyOn(fileManager, 'remove_file_from_dropzone_with_error');
       spyOn(fileManager, 'delete_input_file');
 
-      fileManager.on_upload_again(file, file_name);
+      fileManager.on_upload_again(file_name, file);
 
       expect(viewController.expand_dropzone).toHaveBeenCalled();
       expect(fileManager.remove_file_from_dropzone_with_error).toHaveBeenCalledWith(file);
@@ -179,14 +179,14 @@ describe('File Manager', function() {
 
         spyOn(viewController, 'hide_spinner');
         spyOn(viewController, 'show_chart');
-        spyOn(fileManager, 'delete_analysis_file');
+        spyOn(fileManager, 'delete_input_file');
         spyOn(visualizer, 'visualize');
 
         fileManager.load_data(file_name);
 
         expect(viewController.hide_spinner).toHaveBeenCalled();
         expect(viewController.show_chart).toHaveBeenCalled();
-        expect(fileManager.delete_analysis_file).toHaveBeenCalled();
+        expect(fileManager.delete_input_file).toHaveBeenCalledWith(file_name);
         expect(visualizer.visualize).toHaveBeenCalledWith(data);
       });
     });
@@ -199,15 +199,6 @@ describe('File Manager', function() {
       expect(args["type"]).toBe("GET");
       expect(args["url"]).toBe("/delete-input-file");
       expect(args["data"].fileName).toBe(file_name);
-    });
-
-    it('should make an ajax call to delete the analysis file', function() {
-      spyOn($, 'ajax');
-      fileManager.delete_analysis_file();
-      var args = $.ajax.calls.mostRecent().args[0];
-
-      expect(args["type"]).toBe("GET");
-      expect(args["url"]).toBe("/delete-analysis");
     });
 
 });
