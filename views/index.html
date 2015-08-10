@@ -18,13 +18,15 @@
         <div class="container">
             <div class="masthead">
                 <div class="nav">
-                    <a>Help</a>
+                    <a class="dashboard-link">Dashboard</a>
+                    <a class="help-link">Help</a>
                     <a href="https://github.com/mveritym/diversity-dashboard">Contribute</a>
                 </div>
-                <h3>Diversity Dashboard</h3>
+                <h3 class="dashboard-link">Diversity Dashboard</h3>
             </div>
             <div class="jumbotron">
                 <div id="dashboard"></div>
+                <div id="help-page"></div>
             </div>
         </div>
     </body>
@@ -35,6 +37,18 @@
                 $.getScript("js/viewController.js");
                 $.getScript("js/visualize.js");
                 $.getScript("js/fileManager.js");
+            });
+
+            $("#help-page").load("partials/help-page.html").hide();
+
+            $(".help-link").on("click", function() {
+              $("#dashboard").hide();
+              $("#help-page").show();
+            });
+
+            $(".dashboard-link").on("click", function() {
+              $("#help-page").hide();
+              $("#dashboard").show();
             });
         });
     </script>
