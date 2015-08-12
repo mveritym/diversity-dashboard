@@ -4,7 +4,15 @@
 
 A D3 visualization of diversity data inspired by [Buffer's diversity dashboard](http://diversity.buffer.com/). Just gender for now.
 
+To install and run:
+
 ```
 npm install
 node app.js
+```
+
+To test:
+
+```
+npm test
 ```
