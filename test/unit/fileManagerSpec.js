@@ -11,7 +11,7 @@ describe('File Manager', function() {
       spyOn($, 'getScript').and.callThrough();
       fileManager.initialize_file_upload();
       expect($.getScript).toHaveBeenCalled();
-      expect($.getScript.calls.argsFor(0)[0]).toBe('js/dropzone.js');
+      expect($.getScript.calls.argsFor(0)[0]).toBe('js/lib/dropzone.js');
     });
 
     it('should initialize a dropzone', function() {

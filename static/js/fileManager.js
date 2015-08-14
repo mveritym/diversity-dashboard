@@ -7,7 +7,7 @@ var FileManager = function () {
   var fm = this;
 
   this.initialize_file_upload = function () {
-    $.getScript("js/dropzone.js", function() {
+    $.getScript("js/lib/dropzone.js", function() {
       fm.upload_file(fm.on_file_upload_success, fm.remove_file_from_dropzone_with_error);
     });
   };
