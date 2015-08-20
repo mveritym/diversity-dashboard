@@ -1,6 +1,6 @@
 # [diversity-dashboard](http://diversitydashboard.melissavmarshall.com/)
 
-[![Build Status](https://snap-ci.com/mveritym/diversity-dashboard/branch/master/build_image)](https://snap-ci.com/mveritym/diversity-dashboard/branch/master)
+[![Build Status](https://snap-ci.com/mveritym/diversity-dashboard/branch/master/build_image)](https://snap-ci.com/mveritym/diversity-dashboard/branch/master) [![Coverage Status](https://coveralls.io/repos/mveritym/diversity-dashboard/badge.svg?branch=master&service=github)](https://coveralls.io/github/mveritym/diversity-dashboard?branch=master)
 
 A D3 visualization of diversity data inspired by [Buffer's diversity dashboard](http://diversity.buffer.com/). Just gender for now.
 
